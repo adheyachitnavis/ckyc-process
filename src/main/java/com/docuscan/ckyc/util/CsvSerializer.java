@@ -2,7 +2,7 @@ package com.docuscan.ckyc.util;
 
 import com.docuscan.ckyc.model.DetailRecord;
 import com.docuscan.ckyc.model.HeaderRecord;
-import com.docuscan.ckyc.model.SearchInputBatch;
+import com.docuscan.ckyc.model.search.SearchInputBatch;
 
 import java.io.FileWriter;
 import java.io.IOException;

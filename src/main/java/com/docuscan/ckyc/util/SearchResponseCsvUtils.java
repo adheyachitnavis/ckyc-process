@@ -2,8 +2,8 @@ package com.docuscan.ckyc.util;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
 import com.docuscan.ckyc.model.CkycSearchResponse;
-import com.docuscan.ckyc.model.SearchResponseDetail;
-import com.docuscan.ckyc.model.SearchResponseHeader;
+import com.docuscan.ckyc.model.search.SearchResponseDetail;
+import com.docuscan.ckyc.model.search.SearchResponseHeader;
 
 import java.io.IOException;
 import java.nio.file.Files;

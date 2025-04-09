@@ -1,12 +1,20 @@
-package com.docuscan.ckyc.service;
+package com.docuscan.ckyc.service.download;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
 import com.docuscan.ckyc.model.CkycSearchResponse;
 import com.docuscan.ckyc.model.Client;
-import com.docuscan.ckyc.model.SearchResponseDetail;
+import com.docuscan.ckyc.model.download.DownloadResponse;
+import com.docuscan.ckyc.model.search.SearchResponseDetail;
+import com.docuscan.ckyc.service.search.CsvSearchService;
+import com.docuscan.ckyc.service.CustomerService;
+import com.docuscan.ckyc.service.FilePathService;
 import com.docuscan.ckyc.util.CkycConverter;
+import com.docuscan.ckyc.util.DownloadResponseCsvUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +35,15 @@ public class CkycDownloadService {
                     .map(SearchResponseDetail::getIdentityNumber)
                     .toList();
             var customers = customerService.getCustomersByPanNumber(panNumbers);
-            var downloadReq = CkycConverter.convertToDownloadRequest(searchRes, customers);
+            var downloadReq = CkycConverter.convertToDownloadRequest(searchRes, customers, client);
             downloadService.createDownloadRequestCsv(client, downloadReq);
         }
     }
 
+    public void checkDownloadResponse(Client client) throws CsvProcessingException{
+        var path = pathService.getDownloadResponseDirPath(client);
+        var downloadRes = downloadService.readDownloadResponse(path);
+        downloadService.saveAll(downloadRes);
+
+    }
 }

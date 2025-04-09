@@ -1,9 +1,9 @@
-package com.docuscan.ckyc.model;
+package com.docuscan.ckyc.model.download;
 
 import lombok.Data;
 
 @Data
-public class CkycDownloadHeader {
+public class DownloadRequestHeader {
     private int recordType;
     private int batchNumber;
     private String fiCode;

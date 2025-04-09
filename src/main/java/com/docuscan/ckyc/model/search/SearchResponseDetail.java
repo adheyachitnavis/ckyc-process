@@ -1,10 +1,10 @@
-package com.docuscan.ckyc.model;
+package com.docuscan.ckyc.model.search;
 
 import lombok.Data;
 
 @Data
 public class SearchResponseDetail {
-    private int recordType;
+    private int recordType = 20;
     private int lineNumber;
     private String identityType;
     private String identityNumber;

@@ -27,4 +27,8 @@ public class Client {
     private String status;
     @Transient
     private String dir;
+    @Field("user_id")
+    private String userId;
+    @Field("branch_code")
+    private String branchCode;
 }

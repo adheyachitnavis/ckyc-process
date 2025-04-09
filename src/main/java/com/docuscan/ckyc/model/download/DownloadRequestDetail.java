@@ -1,9 +1,9 @@
-package com.docuscan.ckyc.model;
+package com.docuscan.ckyc.model.download;
 
 import lombok.Data;
 
 @Data
-public class CkycDownloadDetail {
+public class DownloadRequestDetail {
     private int bulkDownloadRecordType;
     private long ckycNo;
     private String authenticationFactor;

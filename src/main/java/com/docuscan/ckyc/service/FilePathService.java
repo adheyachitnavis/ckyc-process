@@ -1,13 +1,10 @@
 package com.docuscan.ckyc.service;
 
-import com.docuscan.ckyc.model.CkycDownloadRequest;
+import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.model.Client;
 import com.docuscan.ckyc.util.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class FilePathService {
@@ -27,12 +24,13 @@ public class FilePathService {
         return clientCurrentProcessDirPath(client) + "/search_req";
     }
 
-    public String getDowanloadRequestFilePath(Client client, CkycDownloadRequest downloadReq) {
-        String filename = String.format("%s_%s_%s_%s_%s.txt",
+    public String getDownloadRequestFilePath(Client client, DownloadRequest downloadReq) {
+        String filename = String.format("%s_%s_%s_%s_%s_%s.txt",
                 client.getFiCode(),
                 client.getRegionCode(),
                 DateUtils.todayStr(),
                 "V1.2",
+                client.getUserId(),
                 String.format("D%05d", downloadReq.getHeader().getBatchNumber())
         );
         return clientCurrentProcessDirPath(client) + "/download_req/" + filename;
@@ -44,6 +42,10 @@ public class FilePathService {
 
     private String clientCurrentProcessDirPath(Client client) {
         return clientDirPath(client) + "/" + DateUtils.todayStrWithHiphen();
+    }
+
+    public String getDownloadResponseDirPath(Client client) {
+        return clientCurrentProcessDirPath(client) + "/download_res";
     }
 
 }

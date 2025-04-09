@@ -2,7 +2,7 @@ package com.docuscan.ckyc.service;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
 import com.docuscan.ckyc.model.Customer;
-import com.docuscan.ckyc.model.SearchInputBatch;
+import com.docuscan.ckyc.model.search.SearchInputBatch;
 import com.docuscan.ckyc.util.CsvSerializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingIterator;

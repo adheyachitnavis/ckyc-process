@@ -1,9 +1,8 @@
-package com.docuscan.ckyc.model;
+package com.docuscan.ckyc.model.search;
 
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.List;
 
 @Data
 public class SearchResponseHeader {

@@ -1,4 +1,4 @@
-package com.docuscan.ckyc.service;
+package com.docuscan.ckyc.service.search;
 
 import com.docuscan.ckyc.model.Client;
 

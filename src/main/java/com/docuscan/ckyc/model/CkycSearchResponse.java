@@ -1,5 +1,7 @@
 package com.docuscan.ckyc.model;
 
+import com.docuscan.ckyc.model.search.SearchResponseDetail;
+import com.docuscan.ckyc.model.search.SearchResponseHeader;
 import lombok.Data;
 
 import java.util.List;

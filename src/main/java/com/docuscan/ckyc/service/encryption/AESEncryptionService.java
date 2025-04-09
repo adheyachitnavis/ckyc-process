@@ -1,4 +1,4 @@
-package com.docuscan.ckyc.service;
+package com.docuscan.ckyc.service.encryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 import org.springframework.stereotype.Service;
-import lombok.NoArgsConstructor;
 
 @Service
 public class AESEncryptionService {

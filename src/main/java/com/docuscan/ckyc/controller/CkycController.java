@@ -54,4 +54,16 @@ class CkycController {
         }
 
     }
+
+    @GetMapping("/check_download_response")
+    public ResponseEntity<String> checkDownloadResponse() {
+        try {
+            service.checkDownloadResponse();
+            return ResponseEntity.ok("Done");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+        }
+
+    }
 }

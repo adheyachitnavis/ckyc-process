@@ -2,6 +2,9 @@ package com.docuscan.ckyc.service;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
 import com.docuscan.ckyc.model.*;
+import com.docuscan.ckyc.model.search.SearchInputBatch;
+import com.docuscan.ckyc.service.download.CkycDownloadService;
+import com.docuscan.ckyc.service.encryption.AESEncryptionService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import lombok.RequiredArgsConstructor;
@@ -238,6 +241,13 @@ public class CkycService {
         var clients = clientService.getAllActiveClients();
         for(Client client : clients) {
            downloadService.createDownloadRequest(client);
+        }
+    }
+
+    public void checkDownloadResponse() throws CsvProcessingException{
+        var clients = clientService.getAllActiveClients();
+        for(Client client : clients) {
+            downloadService.checkDownloadResponse(client);
         }
     }
 }

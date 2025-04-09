@@ -1,6 +1,10 @@
 package com.docuscan.ckyc.util;
 
 import com.docuscan.ckyc.model.*;
+import com.docuscan.ckyc.model.download.DownloadRequestDetail;
+import com.docuscan.ckyc.model.download.DownloadRequestHeader;
+import com.docuscan.ckyc.model.download.DownloadRequest;
+import com.docuscan.ckyc.model.search.SearchResponseHeader;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CkycConverter {
-    public static CkycDownloadRequest convertToDownloadRequest(CkycSearchResponse searchResponse, List<Customer> customers) {
+    public static DownloadRequest convertToDownloadRequest(CkycSearchResponse searchResponse, List<Customer> customers, Client client) {
 
         var panToCustomerMap = customers.stream().collect(Collectors.toMap(
                 Customer::getPanNo,
@@ -24,16 +28,16 @@ public class CkycConverter {
                 .toList();
 
 
-        CkycDownloadRequest downloadRequest = new CkycDownloadRequest();
+        DownloadRequest downloadRequest = new DownloadRequest();
 
         // Convert header
         SearchResponseHeader searchHeader = searchResponse.getHeader();
-        CkycDownloadHeader downloadHeader = new CkycDownloadHeader();
+        DownloadRequestHeader downloadHeader = new DownloadRequestHeader();
         downloadHeader.setRecordType(10);
         downloadHeader.setBatchNumber(searchHeader.getBatchId());
         downloadHeader.setFiCode(searchHeader.getFiCode());
         downloadHeader.setRegionCode(searchHeader.getRegionCode());
-        downloadHeader.setBranchCode("");
+        downloadHeader.setBranchCode(client.getBranchCode());
         downloadHeader.setTotalNoOfDetailRecords(searchDetails.size());
         downloadHeader.setCustType(1);
         downloadRequest.setHeader(downloadHeader);
@@ -43,7 +47,7 @@ public class CkycConverter {
                 .map(detail -> {
 
                     var cust = panToCustomerMap.get(detail.getIdentityNumber());
-                    CkycDownloadDetail downloadDetail = new CkycDownloadDetail();
+                    DownloadRequestDetail downloadDetail = new DownloadRequestDetail();
                     downloadDetail.setBulkDownloadRecordType(60);
                     downloadDetail.setCkycNo(Long.parseLong(detail.getKycNumber()));
                     //convert date from dd-mm-yyyy to dd-MMM-yyyy

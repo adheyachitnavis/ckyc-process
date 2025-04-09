@@ -1,5 +1,7 @@
-package com.docuscan.ckyc.model;
+package com.docuscan.ckyc.model.search;
 
+import com.docuscan.ckyc.model.DetailRecord;
+import com.docuscan.ckyc.model.HeaderRecord;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
