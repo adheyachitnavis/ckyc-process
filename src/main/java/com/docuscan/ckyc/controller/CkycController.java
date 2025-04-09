@@ -1,11 +1,13 @@
 package com.docuscan.ckyc.controller;
 
+import com.docuscan.ckyc.exception.CsvProcessingException;
 import com.docuscan.ckyc.model.Customer;
 import com.docuscan.ckyc.service.CkycService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,27 +20,26 @@ import java.util.List;
 class CkycController {
     private final CkycService service;
 
-    @GetMapping("/process")
-    public ResponseEntity<List<Customer>> processCsv() {
+    @GetMapping("/process/{clientName}")
+    public ResponseEntity<String> processCsv(@PathVariable("clientName") String clientName) {
         List<Customer> customers = null;
         try {
-            customers = service.process();
-            return ResponseEntity.ok(customers);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+            service.process(clientName);
+            return ResponseEntity.ok("Done");
+        } catch (CsvProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }
 
     @GetMapping("/process_all")
     public ResponseEntity<String> processAll() {
-        List<Customer> customers = null;
         try {
             service.processAllClients();
             return ResponseEntity.ok("Done");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }
@@ -50,7 +51,7 @@ class CkycController {
             return ResponseEntity.ok("Done");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }
@@ -62,7 +63,7 @@ class CkycController {
             return ResponseEntity.ok("Done");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
     }

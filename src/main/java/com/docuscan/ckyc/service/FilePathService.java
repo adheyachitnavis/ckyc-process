@@ -40,7 +40,7 @@ public class FilePathService {
         return basePath + "/" + client.getName();
     }
 
-    private String clientCurrentProcessDirPath(Client client) {
+    public String clientCurrentProcessDirPath(Client client) {
         return clientDirPath(client) + "/" + DateUtils.todayStrWithHiphen();
     }
 

@@ -1,6 +1,7 @@
 package com.docuscan.ckyc.service;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
+import com.docuscan.ckyc.exception.KycProcessingException;
 import com.docuscan.ckyc.model.*;
 import com.docuscan.ckyc.model.search.SearchInputBatch;
 import com.docuscan.ckyc.service.download.CkycDownloadService;
@@ -8,6 +9,7 @@ import com.docuscan.ckyc.service.encryption.AESEncryptionService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +19,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CkycService {
     private final CsvProcessingService csvService;
     private final KycAuditService auditService;
@@ -30,6 +32,7 @@ public class CkycService {
     private final BatchService batchService;
     private final ClientService clientService;
     private final CkycDownloadService downloadService;
+    private final FilePathService filePathService;
 
     @Value("${FI_CODE}")
     private String FI_CODE;
@@ -46,58 +49,39 @@ public class CkycService {
     private String fileName;
 
 
-    public List<Customer> process() throws CsvProcessingException {
-        var customers = csvService.readInputCsvFile();
-        var searchInput = createSearchInput(customers.size());
-        try {
-            for (Customer customer : customers) {
-                    processCustomer(customer, searchInput);
-            }
-            fileName = generateFileName();
-            csvService.writeSearchBatchFile(searchInput, fileName);
-        } catch (KycProcessingException e) {
-            auditService.createKycAudit(
-                    KycAudit
-                            .builder()
-                            .customerId(e.getCustomer().getId())
-                            .failureReason(e.getMessage())
-                            .timestamp(Instant.now())
-                            .status(CustomerStatus.FAILED)
-                            .build()
-            );
+    public void process(String clientName) throws CsvProcessingException {
+        var client = clientService.getByName(clientName);
+        if (client == null) {
+            throw new CsvProcessingException("No client found with name " + clientName);
         }
-        return customers;
+        processCustomer(client);
     }
 
-    public void processAllClients() {
+    public void processAllClients() throws CsvProcessingException {
         var clients = clientService.getAllActiveClients();
-        clients.forEach(this::processCustomer);
+        for (Client client : clients) {
+            processCustomer(client);
+        }
 
     }
 
-    public void processCustomer(Client client) {
-        var today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        var dir = basePath + "/" + client.getName() + "/" + today;
-        var path = dir + "/input/input.csv";
-        client.setDir(dir);
-        try {
+    public void processCustomer(Client client) throws CsvProcessingException {
+        var path = filePathService.getInputCsvFilePath(client);
             var customers = csvService.readInputCsvFile(path);
             var searchInput = createSearchInput(client, customers.size());
             for (Customer customer : customers) {
                 try {
-                    processCustomer(customer, searchInput);
+                    processCustomer(customer);
+                    searchInput.getDetailRecords().add(getDetailRecord(customer, searchInput.getDetailRecords().size()));
                 } catch (KycProcessingException e) {
                     e.printStackTrace();
                 }
             }
             fileName = generateFileName(client);
-            csvService.writeSearchBatchFile2(searchInput, client.getDir() + "/search/" + fileName);
-        } catch (CsvProcessingException e) {
-            e.printStackTrace();
-        }
+            csvService.writeSearchBatchFile(searchInput, filePathService.getSearchRequestDirPath(client) + "/" +fileName);
     }
 
-    private void processCustomer(Customer customer, SearchInputBatch searchInput) throws KycProcessingException {
+    private void processCustomer(Customer customer) throws KycProcessingException {
         var newCustomer = customerService.saveCustomer(customer);
         auditService.createKycAudit(KycAudit
                 .builder()
@@ -105,8 +89,6 @@ public class CkycService {
                 .customerId(newCustomer.getId())
                 .timestamp(Instant.now())
                 .build());
-
-        searchInput.getDetailRecords().add(getDetailRecord(customer, searchInput.getDetailRecords().size()));
 
 
 //        try {

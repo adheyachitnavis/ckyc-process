@@ -25,8 +25,6 @@ public class Client {
     @Field("region_code")
     private String regionCode;
     private String status;
-    @Transient
-    private String dir;
     @Field("user_id")
     private String userId;
     @Field("branch_code")

@@ -19,4 +19,8 @@ public class ClientService {
     public List<Client> getAllActiveClients() {
         return repository.findByStatus("ACTIVE");
     }
+
+    public Client getByName(String clientName) {
+        return repository.findByName(clientName);
+    }
 }

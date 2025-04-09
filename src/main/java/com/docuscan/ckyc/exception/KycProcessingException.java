@@ -1,4 +1,4 @@
-package com.docuscan.ckyc.service;
+package com.docuscan.ckyc.exception;
 
 import com.docuscan.ckyc.model.Customer;
 import lombok.Getter;
