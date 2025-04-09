@@ -47,10 +47,10 @@ public class SearchRequestCsvUtils {
                 String.valueOf(header.getTotalNoOfDetailRecords()),
                 safeString(header.getVersionNumber()),
                 DateUtils.fromDate(header.getCreateDate()),
-                safeString(header.getFiller1()),
-                safeString(header.getFiller2()),
-                safeString(header.getFiller3()),
-                safeString(header.getFiller4())
+                "",
+                "",
+                "",
+                ""
         );
     }
 

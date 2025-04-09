@@ -1,5 +1,7 @@
 package com.docuscan.ckyc.service.encryption;
 
+import org.springframework.stereotype.Service;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -7,7 +9,6 @@ import javax.crypto.spec.IvParameterSpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AESEncryptionService {

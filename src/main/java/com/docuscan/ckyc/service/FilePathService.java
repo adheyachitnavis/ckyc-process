@@ -1,7 +1,7 @@
 package com.docuscan.ckyc.service;
 
-import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.model.Client;
+import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.util.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

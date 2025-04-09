@@ -109,7 +109,6 @@ public class CkycService {
 
     private DetailRecord getDetailRecord(Customer customer, int lineNumber) {
         return DetailRecord.builder()
-                .recordType(20)
                 .identityType("C")
                 .identityNumber(customer.getPanNo() + "|") // adding extra pipe char at the end as per sample files
                 .lineNumber(lineNumber+1)
@@ -119,7 +118,6 @@ public class CkycService {
     private SearchInputBatch createSearchInput(int noOfDetailRecords) {
         var header = HeaderRecord.builder()
                 .createDate(Instant.now())
-                .recordType(10)
                 .fiCode(FI_CODE)
                 .regionCode(REGION_CODE)
                 .totalNoOfDetailRecords(noOfDetailRecords)

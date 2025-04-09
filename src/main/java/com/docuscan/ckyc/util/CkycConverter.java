@@ -1,9 +1,11 @@
 package com.docuscan.ckyc.util;
 
-import com.docuscan.ckyc.model.*;
+import com.docuscan.ckyc.model.Client;
+import com.docuscan.ckyc.model.Customer;
+import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.model.download.DownloadRequestDetail;
 import com.docuscan.ckyc.model.download.DownloadRequestHeader;
-import com.docuscan.ckyc.model.download.DownloadRequest;
+import com.docuscan.ckyc.model.search.CkycSearchResponse;
 import com.docuscan.ckyc.model.search.SearchResponseHeader;
 
 import java.text.ParseException;

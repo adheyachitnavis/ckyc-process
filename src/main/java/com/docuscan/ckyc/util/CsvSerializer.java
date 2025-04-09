@@ -51,10 +51,10 @@ public class CsvSerializer {
                 String.valueOf(header.getTotalNoOfDetailRecords()),
                 safeString(header.getVersionNumber()),
                 formatDate(header.getCreateDate()),
-                safeString(header.getFiller1()),
-                safeString(header.getFiller2()),
-                safeString(header.getFiller3()),
-                safeString(header.getFiller4())
+                "",
+                "",
+                "",
+                ""
         );
     }
 

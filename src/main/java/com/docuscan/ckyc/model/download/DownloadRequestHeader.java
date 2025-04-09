@@ -11,7 +11,4 @@ public class DownloadRequestHeader {
     private String branchCode;
     private int totalNoOfDetailRecords;
     private int custType;
-    private String filler2 = "";
-    private String filler3 = "";
-    private String filler4 = "";
 }

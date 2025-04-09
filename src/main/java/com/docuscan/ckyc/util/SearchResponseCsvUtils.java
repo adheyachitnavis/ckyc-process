@@ -1,7 +1,7 @@
 package com.docuscan.ckyc.util;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
-import com.docuscan.ckyc.model.CkycSearchResponse;
+import com.docuscan.ckyc.model.search.CkycSearchResponse;
 import com.docuscan.ckyc.model.search.SearchResponseDetail;
 import com.docuscan.ckyc.model.search.SearchResponseHeader;
 
@@ -46,10 +46,6 @@ public class SearchResponseCsvUtils {
                 header.setTotalNoOfDetailRecords(Integer.parseInt(parts[3]));
                 header.setVersionNumber(parts[4]);
                 header.setCreateDate(DateUtils.toDate(parts[5]));
-                header.setFiller1(parts.length > 6 ? parts[6] : "");
-                header.setFiller2(parts.length > 7 ? parts[7] : "");
-                header.setFiller3(parts.length > 8 ? parts[8] : "");
-                header.setFiller4(parts.length > 9 ? parts[9] : "");
                 response.setHeader(header);
             } else {
                 SearchResponseDetail detail = new SearchResponseDetail();

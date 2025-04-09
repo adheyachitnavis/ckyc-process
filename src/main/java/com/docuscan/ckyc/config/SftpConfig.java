@@ -2,7 +2,6 @@ package com.docuscan.ckyc.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 
 import java.util.HashMap;

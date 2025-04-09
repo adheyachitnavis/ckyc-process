@@ -1,15 +1,13 @@
 package com.docuscan.ckyc.service.download;
 
 import com.docuscan.ckyc.exception.CsvProcessingException;
-import com.docuscan.ckyc.model.download.DownloadRequest;
-import com.docuscan.ckyc.model.CkycSearchResponse;
 import com.docuscan.ckyc.model.Client;
+import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.model.download.DownloadResponse;
 import com.docuscan.ckyc.repository.DownloadResponseRepository;
 import com.docuscan.ckyc.service.FilePathService;
 import com.docuscan.ckyc.util.DownloadRequestCsvUtils;
 import com.docuscan.ckyc.util.DownloadResponseCsvUtils;
-import com.docuscan.ckyc.util.SearchResponseCsvUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

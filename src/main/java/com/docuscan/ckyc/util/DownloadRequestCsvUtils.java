@@ -1,8 +1,8 @@
 package com.docuscan.ckyc.util;
 
+import com.docuscan.ckyc.model.download.DownloadRequest;
 import com.docuscan.ckyc.model.download.DownloadRequestDetail;
 import com.docuscan.ckyc.model.download.DownloadRequestHeader;
-import com.docuscan.ckyc.model.download.DownloadRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;

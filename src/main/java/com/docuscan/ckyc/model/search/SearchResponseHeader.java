@@ -12,9 +12,5 @@ public class SearchResponseHeader {
     private int totalNoOfDetailRecords;
     private String versionNumber;
     private Instant createDate;
-    private String filler1;
-    private String filler2;
-    private String filler3;
-    private String filler4;
     private int batchId;
 }
