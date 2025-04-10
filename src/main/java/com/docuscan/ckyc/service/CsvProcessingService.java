@@ -39,9 +39,9 @@ public class CsvProcessingService {
         return customerList;
     }
 
-    public void writeSearchBatchFile(SearchInputBatch batch, String file) throws CsvProcessingException {
+    public String writeSearchBatchFile(SearchInputBatch batch, String file) throws CsvProcessingException {
         try {
-            CsvSerializer.serializeToCsv(batch, file);
+            return CsvSerializer.serializeToCsv(batch, file);
         } catch (IOException e) {
             throw new CsvProcessingException("Error reading CSV file: " + file, e);
         }

@@ -21,8 +21,8 @@ public class CsvDownloadService {
     private final FilePathService pathService;
     private final DownloadResponseRepository responseRepository;
 
-    public void createDownloadRequestCsv(Client client, DownloadRequest downloadReq) throws CsvProcessingException {
-        var path = pathService.getDownloadRequestFilePath(client, downloadReq);
+    public void createDownloadRequestCsv(Client client, DownloadRequest downloadReq, String username) throws CsvProcessingException {
+        var path = pathService.getDownloadRequestFilePath(client, downloadReq, username);
         try {
             DownloadRequestCsvUtils.write(downloadReq, path);
         } catch (IOException e) {

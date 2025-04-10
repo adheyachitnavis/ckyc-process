@@ -13,6 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class DetailRecord {
 
+    @Builder.Default
     private Integer recordType = 20;
     private Integer lineNumber;
     private String identityType;

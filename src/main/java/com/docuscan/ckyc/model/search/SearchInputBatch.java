@@ -24,6 +24,8 @@ public class SearchInputBatch {
     @Id
     private String id;
 
+    private String batchNo;
+
     @JsonProperty("HEADER_RECORD")
     private HeaderRecord headerRecord;
 

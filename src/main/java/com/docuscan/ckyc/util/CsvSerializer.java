@@ -19,25 +19,29 @@ public class CsvSerializer {
             .ofPattern("dd-MM-yyyy")
             .withZone(ZoneOffset.UTC);
 
-    public static void serializeToCsv(SearchInputBatch batch, String filePath) throws IOException {
+    public static String serializeToCsv(SearchInputBatch batch, String filePath) throws IOException {
         try (FileWriter writer = new FileWriter(filePath)) {
-
+            var searchRequestRaw = new StringBuilder();
             // Write the Header Record first
             HeaderRecord header = batch.getHeaderRecord();
             if (header != null) {
-                writer.append(formatHeaderRecord(header)).append(NEW_LINE);
+                var headerText = formatHeaderRecord(header);
+                writer.append(headerText).append(NEW_LINE);
+                searchRequestRaw.append(headerText).append(NEW_LINE);
             }
 
             // Write each Detail Record after the header
             List<DetailRecord> details = batch.getDetailRecords();
             if (details != null) {
                 for (DetailRecord detail : details) {
-                    writer.append(formatDetailRecord(detail)).append(NEW_LINE);
+                    var detailText = formatDetailRecord(detail);
+                    writer.append(detailText).append(NEW_LINE);
+                    searchRequestRaw.append(detailText).append(NEW_LINE);
                 }
             }
 
             System.out.println("CSV file created successfully at: " + filePath);
-
+            return searchRequestRaw.toString();
         } catch (IOException e) {
             throw e;
         }

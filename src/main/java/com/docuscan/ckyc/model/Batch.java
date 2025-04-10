@@ -22,7 +22,5 @@ public class Batch {
     private String id;
     private int batchNumber;
     private String fiCode;
-
-    @CreatedDate
-    private Instant timestamp;
+    private Instant updatedAt;
 }

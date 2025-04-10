@@ -20,7 +20,7 @@ public class CkycDownloadService {
     private final CsvDownloadService downloadService;
     private final CustomerService customerService;
 
-    public void createDownloadRequest(Client client) throws CsvProcessingException {
+    public void createDownloadRequest(Client client, String username) throws CsvProcessingException {
         var path = pathService.getSearchResponseDirPath(client);
         var searchResponses = searchService.readSearchResponse(path);
 
@@ -31,7 +31,7 @@ public class CkycDownloadService {
                     .toList();
             var customers = customerService.getCustomersByPanNumber(panNumbers);
             var downloadReq = CkycConverter.convertToDownloadRequest(searchRes, customers, client);
-            downloadService.createDownloadRequestCsv(client, downloadReq);
+            downloadService.createDownloadRequestCsv(client, downloadReq, username);
         }
     }
 

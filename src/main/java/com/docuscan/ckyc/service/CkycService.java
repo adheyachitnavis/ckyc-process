@@ -10,6 +10,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class CkycService {
     private final ClientService clientService;
     private final CkycDownloadService downloadService;
     private final FilePathService filePathService;
+    private final RunService runService;
 
     @Value("${FI_CODE}")
     private String FI_CODE;
@@ -41,13 +43,10 @@ public class CkycService {
     private String REGION_CODE;
 
     @Value("${Version}")
-    private String Version;
+    private String version;
 
     @Value("${client.base_path}")
     private String basePath;
-
-    private String fileName;
-
 
     public void process(String clientName) throws CsvProcessingException {
         var client = clientService.getByName(clientName);
@@ -66,22 +65,39 @@ public class CkycService {
     }
 
     public void processCustomer(Client client) throws CsvProcessingException {
+        var run = runService.createRun(client);
         var path = filePathService.getInputCsvFilePath(client);
-            var customers = csvService.readInputCsvFile(path);
-            var searchInput = createSearchInput(client, customers.size());
-            for (Customer customer : customers) {
-                try {
-                    processCustomer(customer);
-                    searchInput.getDetailRecords().add(getDetailRecord(customer, searchInput.getDetailRecords().size()));
-                } catch (KycProcessingException e) {
-                    e.printStackTrace();
-                }
+        var customers = csvService.readInputCsvFile(path);
+        var newCustomers = new ArrayList<Customer>();
+        for (Customer customer : customers) {
+            try {
+                customer.setRunId(new ObjectId(run.getId()));
+                customer.setClientId(new ObjectId(client.getId()));
+                newCustomers.add(processCustomer(customer));
+                log.info("Customer created successfully " + customer.getCustomerName());
+            } catch (KycProcessingException e) {
+                log.error("Skipped processing customer " + customer.getCustomerName() + "For client " + client.getName(), e);
             }
-            fileName = generateFileName(client);
-            csvService.writeSearchBatchFile(searchInput, filePathService.getSearchRequestDirPath(client) + "/" +fileName);
+        }
+        run = runService.updateStatus(run, "CUSTOMER_CREATED");
+
+        var searchInput = createSearchInput(client, customers.size());
+        for (Customer customer : newCustomers) {
+            searchInput.getDetailRecords().add(getDetailRecord(customer, searchInput.getDetailRecords().size()));
+        }
+        log.info("Search Request for prepared for client "+ client.getName());
+        var batchNo = batchService.getSearchBatchNumber(client);
+        var file = filePathService.getSearchRequestFile(client, batchNo);
+        log.info("Writing t "+ client.getName());
+
+        var searchRequestRaw = csvService.writeSearchBatchFile(searchInput, file);
+        run.setSearchBatchNo(searchInput.getBatchNo());
+        run.setSearchRequestRaw(searchRequestRaw);
+        run.setSearchBatchNo(batchNo);
+        runService.updateStatus(run, "SEARCH_REQUEST_CREATED");
     }
 
-    private void processCustomer(Customer customer) throws KycProcessingException {
+    private Customer processCustomer(Customer customer) throws KycProcessingException {
         var newCustomer = customerService.saveCustomer(customer);
         auditService.createKycAudit(KycAudit
                 .builder()
@@ -89,6 +105,7 @@ public class CkycService {
                 .customerId(newCustomer.getId())
                 .timestamp(Instant.now())
                 .build());
+        return newCustomer;
 
 
 //        try {
@@ -121,7 +138,7 @@ public class CkycService {
                 .fiCode(FI_CODE)
                 .regionCode(REGION_CODE)
                 .totalNoOfDetailRecords(noOfDetailRecords)
-                .versionNumber(Version)
+                .versionNumber(version)
                 .build();
         return SearchInputBatch.builder()
                 .id(UUID.randomUUID().toString())
@@ -137,7 +154,7 @@ public class CkycService {
                 .fiCode(client.getFiCode())
                 .regionCode(client.getRegionCode())
                 .totalNoOfDetailRecords(noOfDetailRecords)
-                .versionNumber(Version)
+                .versionNumber(version)
                 .build();
         return SearchInputBatch.builder()
                 .id(UUID.randomUUID().toString())
@@ -187,40 +204,17 @@ public class CkycService {
         }
         newNumber = batch.getBatchNumber() + 1;
         batch.setBatchNumber(newNumber);
-        batch.setTimestamp(Instant.now());
+        batch.setUpdatedAt(Instant.now());
         batchService.saveBatch(batch);
         newBatchNumber = String.format("S%05d", newNumber);
-        fileName = FI_CODE + "_" + currentDate + "_" + Version + "_" + newBatchNumber + ".txt" ;
+        var fileName = FI_CODE + "_" + currentDate + "_" + version + "_" + newBatchNumber + ".txt" ;
         return fileName;
     }
 
-    private String generateFileName(Client client) {
-        var fiCode = client.getFiCode();
-        var batch = batchService.getBatchByFiCode(fiCode);
-        int newNumber;
-        String newBatchNumber;
-        // Generate date in ddMMyyyy format
-        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-
-        if (batch == null) {
-            batch = Batch.builder()
-                    .fiCode(fiCode)
-                    .batchNumber(0)
-                    .build();
-        }
-        newNumber = batch.getBatchNumber() + 1;
-        batch.setBatchNumber(newNumber);
-        batch.setTimestamp(Instant.now());
-        batchService.saveBatch(batch);
-        newBatchNumber = String.format("S%05d", newNumber);
-        fileName = fiCode + "_" + currentDate + "_" + Version + "_" + newBatchNumber + ".txt" ;
-        return fileName;
-    }
-
-    public void createDownloadRequest() throws CsvProcessingException{
+    public void createDownloadRequest(String username) throws CsvProcessingException{
         var clients = clientService.getAllActiveClients();
         for(Client client : clients) {
-           downloadService.createDownloadRequest(client);
+           downloadService.createDownloadRequest(client, username);
         }
     }
 
