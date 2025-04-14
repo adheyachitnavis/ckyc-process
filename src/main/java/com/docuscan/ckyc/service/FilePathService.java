@@ -24,7 +24,7 @@ public class FilePathService {
     }
 
     public String getSearchRequestFile(Client client, String batchNo) {
-        return getSearchRequestDirPath(client) + getSearchRequestFileName(client, batchNo);
+        return getSearchRequestDirPath(client) + "/" + getSearchRequestFileName(client, batchNo);
     }
 
     public String getSearchRequestDirPath(Client client) {
